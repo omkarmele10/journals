@@ -8,26 +8,37 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
 
 import java.awt.*;
 
 @SpringBootApplication
+@EnableTransactionManagement
+@EnableScheduling
+
 public class JournalApplication {
 
     public static void main(String[] args) {
 //        ConfigurableApplicationContext context =
-            SpringApplication.run(JournalApplication.class, args);
+        SpringApplication.run(JournalApplication.class, args);
 //        ConfigurableEnvironment environment = context.getEnvironment();
 //        System.out.println(environment.getActiveProfiles()[0]);
     }
 
     @Bean
-    public PlatformTransactionManager falana(MongoDatabaseFactory dbFactory){
+    public PlatformTransactionManager falana(MongoDatabaseFactory dbFactory) {
         return new MongoTransactionManager(dbFactory);
     }
-//PlatformTransactionManager: This is a standard Spring interface that acts as the core engine for managing transactions (handling commits, rollbacks, and defining the scope of operations).
+
+    //PlatformTransactionManager: This is a standard Spring interface that acts as the core engine for managing transactions (handling commits, rollbacks, and defining the scope of operations).
 //MongoTransactionManager: This is the specific implementation of that interface required for MongoDB. It ensures that if multiple database operations are grouped under a @Transactional annotation, they succeed or fail as a single unit (achieving atomicity).
 //MongoDatabaseFactory: This is a dependency that provides the connection to your MongoDB instance. Spring Boot automatically detects your database configuration (from application.properties) and provides this factory instance to the method.
 //@Bean explicitly telling Spring to manage transactions for database.
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 }
