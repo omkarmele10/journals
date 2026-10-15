@@ -1,0 +1,58 @@
+# add all appropriate applicate properties here, i will give env variables
+weather:
+  api:
+    key: ${WEATHER_API_KEY}
+
+spring:
+  main:
+    allow-circular-references: true #for removing circular dependency due to circular dependency
+
+  redis:
+    uri: ${REDIS_URI} 
+
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}  
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:     
+            enable: true
+  profiles:
+    active: dev
+
+  kafka:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS} 
+      producer:
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        # Keeps your JSON serializer for sending complex models
+        value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+      consumer:
+        group-id: weekly-sentiment-group
+        auto-offset-reset: earliest
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        # Keeps your JSON deserializer for parsing incoming objects
+        value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+        properties:
+          spring:
+            json:
+              trusted:
+                packages: net.engineeringdigest.journalApp.model
+
+      # Global properties applied to both producers and consumers
+      properties:
+        security:
+          protocol: SASL_SSL
+        sasl:
+          mechanism: SCRAM-SHA-256
+          jaas:
+            config: ${KAFKA_JAAS_CONFIG}
+
+        session:
+          timeout:
+            ms: 45000
